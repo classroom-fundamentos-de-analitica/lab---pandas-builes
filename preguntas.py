@@ -23,7 +23,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.shape[0]
 
 
 def pregunta_02():
@@ -34,7 +34,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return len(tbl0.columns)
 
 
 def pregunta_03():
@@ -51,7 +51,10 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    serie = tbl0._c1
+    serie = serie.value_counts()
+    serie = serie.sort_index()
+    return serie
 
 
 def pregunta_04():
@@ -66,7 +69,9 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    mean_by_letter = tbl0.groupby('_c1').mean()['_c2']
+
+    return mean_by_letter
 
 
 def pregunta_05():
@@ -83,7 +88,9 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    max_by_letter = tbl0.groupby('_c1').max()['_c2']
+
+    return max_by_letter
 
 
 def pregunta_06():
@@ -95,7 +102,14 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+
+    # El metdo unique nos retorna una lista con los diferentes elementos de la columna
+    lst = tbl1['_c4'].unique()
+
+    upper_lst = [x.upper() for x in lst]
+    upper_lst.sort()
+
+    return upper_lst
 
 
 def pregunta_07():
@@ -111,7 +125,9 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    sum_by_letter = tbl0.groupby('_c1').sum()['_c2']
+
+    return sum_by_letter
 
 
 def pregunta_08():
@@ -129,7 +145,9 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    tbl0['suma'] = tbl0['_c0'] + tbl0['_c2']
+
+    return tbl0
 
 
 def pregunta_09():
@@ -147,7 +165,12 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    # Asi convertimos una columna del df en datetime, aunque en este caso no se puede cambiar
+    # No se puede cambiar ya que una de las fechas del archivo csv es 1999-02-29 la cual es una fecha invalida
+    #     tbl0['_c3'] =pd.to_datetime(tbl0['_c3'],  format='%Y-%m-%d')
+    tbl0['year'] = tbl0['_c3'].apply(lambda x: x.split('-')[0])
+
+    return tbl0
 
 
 def pregunta_10():
@@ -218,4 +241,12 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    union = pd.merge(
+        tbl0,
+        tbl2,
+        on="_c0",
+    )
+
+    sum_by_letter = union.groupby('_c1').sum('_c5b')['_c5b']
+
+    return sum_by_letter
