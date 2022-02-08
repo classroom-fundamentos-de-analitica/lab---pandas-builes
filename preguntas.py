@@ -259,7 +259,6 @@ def pregunta_12():
     37   37                    eee:0,fff:2,hhh:6
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
-    
     """
 
     dicc = {}
