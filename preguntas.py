@@ -187,7 +187,23 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+
+    dicc = {}
+
+    for a, b in zip(tbl0['_c1'], tbl0['_c2']):
+        dicc[a] = dicc.get(a, '') + str(b)
+#         print(i)
+
+    for key in dicc:
+        dicc[key] = ':'.join(sorted(dicc[key]))
+
+    lst = [[key, dicc[key]] for key in dicc]
+
+    df = pd.DataFrame(lst, columns=['_c0', '_c1'])
+
+    df = df.sort_values('_c0')
+
+    return df
 
 
 def pregunta_11():
@@ -206,7 +222,27 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    union = pd.merge(
+        tbl0,
+        tbl1,
+        on="_c0",
+    )
+
+    dicc = {}
+
+    for a, b in zip(union['_c0'], union['_c4']):
+        dicc[a] = dicc.get(a, '') + str(b)
+
+    for key in dicc:
+        dicc[key] = ','.join(sorted(dicc[key]))
+
+    lst = [[key, dicc[key]] for key in dicc]
+
+    df = pd.DataFrame(lst, columns=['_c0', '_c4'])
+
+#     df= df.sort_values('_c0')
+
+    return df
 
 
 def pregunta_12():
@@ -224,7 +260,22 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+
+    dicc = {}
+
+    for a, b, c in zip(tbl2['_c0'], tbl2['_c5a'], tbl2['_c5b']):
+        dicc[a] = dicc.get(a, '') + str(b) + ':' + str(c) + " "
+
+    for key in dicc:
+        dicc[key] = dicc[key].split(' ')
+        dicc[key].pop()
+        dicc[key] = ','.join(sorted(dicc[key]))
+
+    lst = [[key, dicc[key]] for key in dicc]
+
+    df = pd.DataFrame(lst, columns=['_c0', '_c5'])
+
+    return df
 
 
 def pregunta_13():
