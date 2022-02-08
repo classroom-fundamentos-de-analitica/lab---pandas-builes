@@ -188,7 +188,7 @@ def pregunta_10():
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
 
-    dicc = {}
+    dicc = {'A': '', 'B': '', 'C': '', 'D': '', 'E': ''}
 
     for a, b in zip(tbl0['_c1'], tbl0['_c2']):
         dicc[a] = dicc.get(a, '') + str(b)
