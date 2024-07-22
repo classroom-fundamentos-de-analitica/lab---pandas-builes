@@ -8,6 +8,7 @@ Utilice los archivos `tbl0.tsv`, `tbl1.tsv` y `tbl2.tsv`, para resolver las preg
 
 """
 import pandas as pd
+import datetime
 
 tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
 tbl1 = pd.read_csv("tbl1.tsv", sep="\t")
@@ -22,7 +23,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.shape[0]
 
 
 def pregunta_02():
@@ -33,7 +34,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return len(tbl0.columns)
 
 
 def pregunta_03():
@@ -50,7 +51,10 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    serie = tbl0._c1
+    serie = serie.value_counts()
+    serie = serie.sort_index()
+    return serie
 
 
 def pregunta_04():
@@ -65,7 +69,9 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    mean_by_letter = tbl0.groupby('_c1').mean()['_c2']
+
+    return mean_by_letter
 
 
 def pregunta_05():
@@ -82,7 +88,9 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    max_by_letter = tbl0.groupby('_c1').max()['_c2']
+
+    return max_by_letter
 
 
 def pregunta_06():
@@ -94,7 +102,14 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+
+    # El metdo unique nos retorna una lista con los diferentes elementos de la columna
+    lst = tbl1['_c4'].unique()
+
+    upper_lst = [x.upper() for x in lst]
+    upper_lst.sort()
+
+    return upper_lst
 
 
 def pregunta_07():
@@ -110,7 +125,9 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    sum_by_letter = tbl0.groupby('_c1').sum()['_c2']
+
+    return sum_by_letter
 
 
 def pregunta_08():
@@ -128,7 +145,9 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    tbl0['suma'] = tbl0['_c0'] + tbl0['_c2']
+
+    return tbl0
 
 
 def pregunta_09():
@@ -146,7 +165,12 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    # Asi convertimos una columna del df en datetime, aunque en este caso no se puede cambiar
+    # No se puede cambiar ya que una de las fechas del archivo csv es 1999-02-29 la cual es una fecha invalida
+    #     tbl0['_c3'] =pd.to_datetime(tbl0['_c3'],  format='%Y-%m-%d')
+    tbl0['year'] = tbl0['_c3'].apply(lambda x: x.split('-')[0])
+
+    return tbl0
 
 
 def pregunta_10():
@@ -163,7 +187,23 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+
+    dicc = {'A': '', 'B': '', 'C': '', 'D': '', 'E': ''}
+
+    for a, b in zip(tbl0['_c1'], tbl0['_c2']):
+        dicc[a] = dicc.get(a, '') + str(b)
+#         print(i)
+
+    for key in dicc:
+        dicc[key] = ':'.join(sorted(dicc[key]))
+
+    lst = [[key, dicc[key]] for key in dicc]
+
+    df = pd.DataFrame(lst, columns=['_c0', '_c1'])
+
+    df = df.sort_values('_c0')
+
+    return df
 
 
 def pregunta_11():
@@ -182,7 +222,27 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    union = pd.merge(
+        tbl0,
+        tbl1,
+        on="_c0",
+    )
+
+    dicc = {}
+
+    for a, b in zip(union['_c0'], union['_c4']):
+        dicc[a] = dicc.get(a, '') + str(b)
+
+    for key in dicc:
+        dicc[key] = ','.join(sorted(dicc[key]))
+
+    lst = [[key, dicc[key]] for key in dicc]
+
+    df = pd.DataFrame(lst, columns=['_c0', '_c4'])
+
+#     df= df.sort_values('_c0')
+
+    return df
 
 
 def pregunta_12():
@@ -200,7 +260,22 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+
+    dicc = {}
+
+    for a, b, c in zip(tbl2['_c0'], tbl2['_c5a'], tbl2['_c5b']):
+        dicc[a] = dicc.get(a, '') + str(b) + ':' + str(c) + " "
+
+    for key in dicc:
+        dicc[key] = dicc[key].split(' ')
+        dicc[key].pop()
+        dicc[key] = ','.join(sorted(dicc[key]))
+
+    lst = [[key, dicc[key]] for key in dicc]
+
+    df = pd.DataFrame(lst, columns=['_c0', '_c5'])
+
+    return df
 
 
 def pregunta_13():
@@ -217,4 +292,12 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    union = pd.merge(
+        tbl0,
+        tbl2,
+        on="_c0",
+    )
+
+    sum_by_letter = union.groupby('_c1').sum('_c5b')['_c5b']
+
+    return sum_by_letter
